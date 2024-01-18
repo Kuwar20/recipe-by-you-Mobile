@@ -9,6 +9,7 @@ import { BellIcon, MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import Categoies from "../components/categories";
 import Recipes from "../components/recipes";
 import axios from "axios";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 export default function HomeScreen() {
     const [activeCategory, setActiveCategory] = useState("Pasta");
@@ -19,6 +20,12 @@ export default function HomeScreen() {
         getCategories();
         getRecipes();
     }, []);
+
+    const handleChangeCategory = category =>{
+        getRecipes(category);
+        setActiveCategory(category);
+        setMeals([]);
+    }
 
     // const getCategories = async () => {
     //     try {
@@ -49,6 +56,10 @@ export default function HomeScreen() {
                 const sortedCategories = [...categories].sort((a, b) => {
                     const order = {
                         Pasta: -1,
+                        Seafood:-1,
+                        Side: -1,
+                        Vegan: -1,
+                        Chicken: 1,
                         Goat: 1,
                         Pork: 1,
                         Beef: 1,
@@ -136,7 +147,7 @@ export default function HomeScreen() {
                         <Categoies
                             categories={categories}
                             activeCategory={activeCategory}
-                            setActiveCategory={setActiveCategory}
+                            handleChangeCategory={handleChangeCategory}
                         />
                     )}
                 </View>

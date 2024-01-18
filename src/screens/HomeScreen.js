@@ -11,20 +11,70 @@ import Recipes from "../components/recipes";
 import axios from "axios";
 
 export default function HomeScreen() {
-    const [activeCategory, setActiveCategory] = useState("Beef");
+    const [activeCategory, setActiveCategory] = useState("Pasta");
     const [categories, setCategories] = useState([]);
+    const [meals, setMeals] = useState([]);
+
     useEffect(() => {
         getCategories();
-    }, [])
+        getRecipes();
+    }, []);
+
+    // const getCategories = async () => {
+    //     try {
+    //         const response = await axios.get(
+    //             "https://www.themealdb.com/api/json/v1/1/categories.php"
+    //         );
+    //         // console.log("response", response.data);
+    //         if (response && response.data) {
+    //             setCategories(response.data.categories);
+    //         }
+    //     } catch (error) {
+    //         console.log("error", error.message);
+    //     }
+    // };
 
     const getCategories = async () => {
         try {
             const response = await axios.get(
                 "https://www.themealdb.com/api/json/v1/1/categories.php"
             );
-            // console.log("response", response.data);
+
             if (response && response.data) {
-                setCategories(response.data.categories);
+                // Get the categories from the API response
+                const categories = response.data.categories;
+
+                // Sort the categories array to bring "Pasta" to the front,
+                // and move "Goat," "Pork," "Beef," and "Lamb" to the end
+                const sortedCategories = [...categories].sort((a, b) => {
+                    const order = {
+                        Pasta: -1,
+                        Goat: 1,
+                        Pork: 1,
+                        Beef: 1,
+                        Lamb: 1,
+                        Miscellaneous: 1,
+                    };
+
+                    return (order[a.strCategory] || 0) - (order[b.strCategory] || 0);
+                });
+
+                // Set the state with the sorted categories
+                setCategories(sortedCategories);
+            }
+        } catch (error) {
+            console.log("error", error.message);
+        }
+    };
+
+    const getRecipes = async (category = "Pasta") => {
+        try {
+            const response = await axios.get(
+                `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`
+            );
+            //console.log("response", response.data);
+            if (response && response.data) {
+                setMeals(response.data.meals);
             }
         } catch (error) {
             console.log("error", error.message);
@@ -82,15 +132,17 @@ export default function HomeScreen() {
                 </View>
                 {/* categories */}
                 <View>
-                    {categories.length > 0 && <Categoies
-                        categories={categories}
-                        activeCategory={activeCategory}
-                        setActiveCategory={setActiveCategory}
-                    />}
+                    {categories.length > 0 && (
+                        <Categoies
+                            categories={categories}
+                            activeCategory={activeCategory}
+                            setActiveCategory={setActiveCategory}
+                        />
+                    )}
                 </View>
                 {/* recipes */}
                 <View>
-                    <Recipes categories={categories} />
+                    <Recipes meals={meals} categories={categories} />
                 </View>
             </ScrollView>
         </View>

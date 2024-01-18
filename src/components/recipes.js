@@ -7,6 +7,7 @@ import {
 import MasonryList from "@react-native-seoul/masonry-list";
 import { mealData } from "../constants/index";
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import Loading from "./loading";
 
 
 export default function Recipes({ categories, meals }) {
@@ -20,7 +21,9 @@ export default function Recipes({ categories, meals }) {
             </Text>
             <View>
                 {
-                    categories.length==0 || meals.length==0? null: (
+                    categories.length==0 || meals.length==0? (
+                        <Loading size="large" className="mt-20" />
+                    ): (
                         <MasonryList
                             data={meals}
                             keyExtractor={(item) => item.idMeal}

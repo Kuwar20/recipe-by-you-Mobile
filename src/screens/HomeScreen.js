@@ -90,7 +90,7 @@ export default function HomeScreen() {
                 </View>
                 {/* recipes */}
                 <View>
-                    <Recipes />
+                    <Recipes categories={categories} />
                 </View>
             </ScrollView>
         </View>

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, TextInput } from "react-native";
+import { View, Text, ScrollView, Image, TextInput, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -9,12 +9,14 @@ import { BellIcon, MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import Categoies from "../components/categories";
 import Recipes from "../components/recipes";
 import axios from "axios";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+
 
 export default function HomeScreen() {
+    const defaultCategory = "Pasta";
     const [activeCategory, setActiveCategory] = useState("Pasta");
     const [categories, setCategories] = useState([]);
     const [meals, setMeals] = useState([]);
+    const [searchText, setSearchText] = useState('');
 
     useEffect(() => {
         getCategories();
@@ -40,6 +42,28 @@ export default function HomeScreen() {
     //         console.log("error", error.message);
     //     }
     // };
+    
+    const handleSearch = async () => {
+        try {
+            if (!searchText.trim()) {
+                // If search text is empty, reset to default category
+                getRecipes(defaultCategory);
+                setActiveCategory(defaultCategory);
+            } else {
+                // If searching, set activeCategory to null
+                setActiveCategory(null);
+                // Fetch recipes based on search text
+                const response = await axios.get(
+                    `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchText}`
+                );
+                if (response && response.data) {
+                    setMeals(response.data.meals);
+                }
+            }
+        } catch (error) {
+            console.log("error", error.message);
+        }
+    };
 
     const getCategories = async () => {
         try {
@@ -130,7 +154,7 @@ export default function HomeScreen() {
                         stay at <Text className="text-amber-400">home</Text>
                     </Text>
                 </View>
-                <View className="mx-4 flex-row items-center rounded-full bg-black/5 p-[6px]">
+                {/* <View className="mx-4 flex-row items-center rounded-full bg-black/5 p-[6px]">
                     <TextInput
                         placeholder="Search any recipe"
                         placeholderTextColor={"gray"}
@@ -140,6 +164,20 @@ export default function HomeScreen() {
                     <View className="bg-white rounded-full p-3">
                         <MagnifyingGlassIcon size={hp(2.5)} strokewidth={3} color="gray" />
                     </View>
+                </View> */}
+                <View className="mx-4 flex-row items-center rounded-full bg-black/5 p-[6px]">
+                    <TextInput
+                        placeholder="Search any recipe"
+                        placeholderTextColor={"gray"}
+                        style={{ fontSize: hp(1.7) }}
+                        className="flex-1 text-base mb-1 pl-3 tracking-wider"
+                        value={searchText}
+                        onChangeText={(text) => setSearchText(text)}
+                        onSubmitEditing={handleSearch}
+                    />
+                    <TouchableOpacity onPress={handleSearch} className="bg-white rounded-full p-3">
+                        <MagnifyingGlassIcon size={hp(2.5)} strokewidth={3} color="gray" />
+                    </TouchableOpacity>
                 </View>
                 {/* categories */}
                 <View>

@@ -12,8 +12,8 @@ import axios from "axios";
 
 
 export default function HomeScreen() {
-    const defaultCategory = "Pasta";
-    const [activeCategory, setActiveCategory] = useState("Pasta");
+    const defaultCategory = "Side";
+    const [activeCategory, setActiveCategory] = useState("Side");
     const [categories, setCategories] = useState([]);
     const [meals, setMeals] = useState([]);
     const [searchText, setSearchText] = useState('');
@@ -29,20 +29,6 @@ export default function HomeScreen() {
         setMeals([]);
     }
 
-    // const getCategories = async () => {
-    //     try {
-    //         const response = await axios.get(
-    //             "https://www.themealdb.com/api/json/v1/1/categories.php"
-    //         );
-    //         // console.log("response", response.data);
-    //         if (response && response.data) {
-    //             setCategories(response.data.categories);
-    //         }
-    //     } catch (error) {
-    //         console.log("error", error.message);
-    //     }
-    // };
-    
     const handleSearch = async () => {
         try {
             if (!searchText.trim()) {
@@ -79,11 +65,11 @@ export default function HomeScreen() {
                 // and move "Goat," "Pork," "Beef," and "Lamb" to the end
                 const sortedCategories = [...categories].sort((a, b) => {
                     const order = {
+                        Side: -4,
+                        Seafood: -3,
                         Pasta: -1,
-                        Seafood:-1,
-                        Side: -1,
-                        Vegan: -1,
-                        Chicken: 1,
+                        Dessert:-1,
+                        Chicken: 0,
                         Goat: 1,
                         Pork: 1,
                         Beef: 1,
@@ -102,7 +88,7 @@ export default function HomeScreen() {
         }
     };
 
-    const getRecipes = async (category = "Pasta") => {
+    const getRecipes = async (category = "Side") => {
         try {
             const response = await axios.get(
                 `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`
@@ -154,17 +140,7 @@ export default function HomeScreen() {
                         stay at <Text className="text-amber-400">home</Text>
                     </Text>
                 </View>
-                {/* <View className="mx-4 flex-row items-center rounded-full bg-black/5 p-[6px]">
-                    <TextInput
-                        placeholder="Search any recipe"
-                        placeholderTextColor={"gray"}
-                        style={{ fontSize: hp(1.7) }}
-                        className="flex-1 text-base mb-1 pl-3 tracking-wider"
-                    />
-                    <View className="bg-white rounded-full p-3">
-                        <MagnifyingGlassIcon size={hp(2.5)} strokewidth={3} color="gray" />
-                    </View>
-                </View> */}
+                {/* search box */}
                 <View className="mx-4 flex-row items-center rounded-full bg-black/5 p-[6px]">
                     <TextInput
                         placeholder="Search any recipe"
